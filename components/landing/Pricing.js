@@ -10,9 +10,33 @@ export default function Pricing() {
     const [waitlistEmail, setWaitlistEmail] = useState('');
     const [waitlistStatus, setWaitlistStatus] = useState('idle'); // idle, loading, success, error
     const [waitlistError, setWaitlistError] = useState('');
+    const [botBait, setBotBait] = useState(''); // Honeypot trap state
 
     const handleJoinWaitlist = async (e) => {
         e.preventDefault();
+
+        // 1. HONEYPOT (BOT PROTECTION): If a bot fills the hidden field, silently reject
+        if (botBait !== '') {
+            setWaitlistStatus('success'); // Trick the bot into thinking it worked
+            return;
+        }
+
+        // 2. RATE LIMITING (LOCAL BROWSER): Check if user already submitted recently limits to a specific time span
+        const lastSubmitDate = localStorage.getItem('qrflow_waitlist_date');
+        const count = parseInt(localStorage.getItem('qrflow_waitlist_count') || '0');
+
+        if (lastSubmitDate) {
+            const passedTime = new Date() - new Date(lastSubmitDate);
+            // Limit: max 3 attempts every 24 hours
+            if (passedTime < 86400000 && count >= 3) {
+                setWaitlistStatus('error');
+                setWaitlistError('You have reached the maximum number of waitlist requests for today.');
+                return;
+            } else if (passedTime >= 86400000) {
+                localStorage.setItem('qrflow_waitlist_count', '0'); // Reset after 24 hours
+            }
+        }
+
         setWaitlistStatus('loading');
         setWaitlistError('');
 
@@ -20,6 +44,8 @@ export default function Pricing() {
 
         if (result.success) {
             setWaitlistStatus('success');
+            localStorage.setItem('qrflow_waitlist_date', new Date().toISOString());
+            localStorage.setItem('qrflow_waitlist_count', (count + 1).toString());
         } else {
             setWaitlistStatus('error');
             // Check for duplicate email error code (Supabase returns 23505 for unique violation)
@@ -107,6 +133,19 @@ export default function Pricing() {
                                 </p>
 
                                 <form onSubmit={handleJoinWaitlist}>
+                                    {/* Honeypot field (hidden from humans, bots will fill this in and get trapped) */}
+                                    <div style={{ display: 'none' }} aria-hidden="true">
+                                        <label htmlFor="website">Website</label>
+                                        <input
+                                            type="text"
+                                            id="website"
+                                            name="website"
+                                            tabIndex="-1"
+                                            autoComplete="off"
+                                            value={botBait}
+                                            onChange={(e) => setBotBait(e.target.value)}
+                                        />
+                                    </div>
                                     <div style={{ marginBottom: 20 }}>
                                         <label style={{ display: 'block', color: 'white', fontSize: 14, fontWeight: 500, marginBottom: 8 }}>Email Address</label>
                                         <input
