@@ -3,19 +3,32 @@
 import { useState } from 'react';
 import { Check, X, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { joinWaitlist } from '@/lib/store';
 
 export default function Pricing() {
     const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
     const [waitlistEmail, setWaitlistEmail] = useState('');
-    const [waitlistStatus, setWaitlistStatus] = useState('idle'); // idle, loading, success
+    const [waitlistStatus, setWaitlistStatus] = useState('idle'); // idle, loading, success, error
+    const [waitlistError, setWaitlistError] = useState('');
 
-    const handleJoinWaitlist = (e) => {
+    const handleJoinWaitlist = async (e) => {
         e.preventDefault();
         setWaitlistStatus('loading');
-        // Dummy timeout to simulate API call since we don't have a DB for waitlist yet
-        setTimeout(() => {
+        setWaitlistError('');
+
+        const result = await joinWaitlist(waitlistEmail);
+
+        if (result.success) {
             setWaitlistStatus('success');
-        }, 1200);
+        } else {
+            setWaitlistStatus('error');
+            // Check for duplicate email error code (Supabase returns 23505 for unique violation)
+            if (result.error.includes('duplicate key') || result.error.includes('23505')) {
+                setWaitlistError('This email is already on the waitlist!');
+            } else {
+                setWaitlistError(result.error || 'Something went wrong. Please try again.');
+            }
+        }
     };
 
     const plans = [
@@ -123,6 +136,11 @@ export default function Pricing() {
                                         {waitlistStatus !== 'loading' && <ArrowRight size={18} />}
                                     </button>
                                 </form>
+                                {waitlistStatus === 'error' && (
+                                    <p style={{ textAlign: 'center', fontSize: 13, color: '#EF4444', marginTop: 12, background: 'rgba(239, 68, 68, 0.1)', padding: '8px', borderRadius: '8px' }}>
+                                        {waitlistError}
+                                    </p>
+                                )}
                                 <p style={{ textAlign: 'center', fontSize: 12, color: '#64748B', marginTop: 16 }}>No credit card required.</p>
                             </>
                         )}
