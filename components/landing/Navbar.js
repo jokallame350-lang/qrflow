@@ -55,8 +55,6 @@ export default function Navbar() {
                         onMouseEnter={e => e.target.style.color = 'white'} onMouseLeave={e => e.target.style.color = '#94A3B8'}>Features</a>
                     <a href="#how-it-works" style={{ color: '#94A3B8', fontSize: 14, fontWeight: 600, textDecoration: 'none', transition: 'color 0.2s' }}
                         onMouseEnter={e => e.target.style.color = 'white'} onMouseLeave={e => e.target.style.color = '#94A3B8'}>How it Works</a>
-                    <a href="#pricing" style={{ color: '#94A3B8', fontSize: 14, fontWeight: 600, textDecoration: 'none', transition: 'color 0.2s' }}
-                        onMouseEnter={e => e.target.style.color = 'white'} onMouseLeave={e => e.target.style.color = '#94A3B8'}>Pricing</a>
                 </div>
 
                 {/* Auth */}
