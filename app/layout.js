@@ -1,9 +1,49 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "QRFlow — Dynamic QR Code Management Platform",
-  description: "Create, customize, and track dynamic QR codes with powerful analytics. Change destinations anytime without reprinting. Start free today.",
-  keywords: "QR code, dynamic QR, QR analytics, QR generator, QR management",
+  metadataBase: new URL('https://vast-planck.vercel.app'),
+  title: {
+    default: "QRFlow | Create & Track Dynamic QR Codes instantly",
+    template: "%s | QRFlow"
+  },
+  description: "Create, customize, and track dynamic QR codes with powerful analytics. Change link destinations anytime without reprinting. Built for modern creators and businesses. Start for free.",
+  keywords: [
+    "QR code generator", "dynamic QR code", "QR analytics", "QR code management",
+    "custom QR code", "marketing QR", "trackable QR", "QR code branding"
+  ],
+  authors: [{ name: 'QRFlow' }],
+  creator: 'QRFlow Team',
+  publisher: 'QRFlow',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    title: 'QRFlow | Dynamic QR Code Management',
+    description: 'Create, customize, and track dynamic QR codes with powerful analytics. Change destinations anytime without reprinting.',
+    url: 'https://vast-planck.vercel.app',
+    siteName: 'QRFlow',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'QRFlow | Professional QR Code Generator',
+    description: 'Track dynamic QR codes with powerful analytics. Change your link destination anytime without reprinting.',
+    creator: '@qrflow',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({ children }) {
